@@ -57,9 +57,7 @@ We will run jobs using slurm files and the array option:
 
 ```bash
 nano fastqc.slurm # to create a new slurm file
-sbatch fastqc.slurm # to run the file
-
-#the file will include
+#copy the following code inside
 
 #!/bin/sh
 #SBATCH --array=1-12
@@ -87,6 +85,12 @@ Then we can use MultiQC to aggregate all the reports
 ml multiqc #if the module is not loaded
 multiqc ../fasta/fastqc_reports -o ../fasta/multiqc_report
 ```
+you can submit the job with:
+
+```bash
+sbatch fastqc.slurm # to run the file
+```
+
 ## Step 4: Remove adapters and low quality bases
 This step uses [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic)
 
@@ -96,17 +100,19 @@ Since we know now how to parallelize, let's use arrays (but still each job will 
 
 We can find multiple [adapter](https://github.com/usadellab/Trimmomatic/tree/main/adapters) libraries in the Trimmomatic GitHub page.
 
+create a file with the the location of the fastq files:
 ```bash
-#to create a file with the name of the individuals
+#to create a file with the name of the individuals (six in this example))
 find ../fasta -name "*_1.fastq.gz" | sed 's/_1.fastq.gz//g' > files.path.txt
+```
 
+
+```bash
 # first create this folder:
 mkdir ../fasta.trimmed
 
 nano trimmomatic.slurm
-sbatch trimmomatic.slurm
-
-#the file will include
+#copy pase the following code in side
 
 #!/bin/sh
 #SBATCH --array=1-6
@@ -129,6 +135,12 @@ mkdir ../fasta.trimmed/${o}
 java -jar $TM_HOME/trimmomatic.jar PE -phred33 ${f}_R1_001.fastq.gz ${f}_R2_001.fastq.gz ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/${o}/${o}_1_unpaired.fastq.gz output/${o}/${o}_2_paired.fastq.gz ../fasta.trimmed/${o}/${o}_2_unpaired.fastq.gz ILLUMINACLIP:../TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:35
 
 ```
+you can submit the job with:
+
+```bash
+sbatch trimmomatic.slurm
+```
+
 ## Step 5: check quality after removing adapters and low quality bases
 
 We will run jobs using slurm files and the array option:
@@ -136,7 +148,6 @@ We will run jobs using slurm files and the array option:
 ```bash
 mkdir ../fasta.trimmed/fastqc_reports
 nano fastqc2.slurm # to create a new slurm file
-sbatch fastqc2.slurm # to run the file
 
 #the file will include
 
@@ -162,6 +173,12 @@ echo ${SAMPLE}
 # Run FastQC on the selected sample
 fastqc ${SAMPLE} -o ../fasta.trimmed/fastqc_reports
 ```
+you can submit the job with:
+
+```bash
+sbatch fastqc2.slurm
+```
+
 Then we can use MultiQC to aggregate all the reports
 
 ```bash
@@ -170,6 +187,60 @@ multiqc ../fasta.trimmed/fastqc_reports -o ../fasta.trimmed/multiqc_report
 ```
 
 ## Step 6: Quantify gene expression
-This step will use Kallisto. 
+This step will use [Kallisto](https://pachterlab.github.io/kallisto/manual). 
+
+Kallisto’s pseudo-alignment approach makes it exceptionally fast and memory-efficient, suitable for analyzing large RNA-Seq datasets. It’s widely used in gene expression studies due to its accuracy and speed, though it may lack the detailed read-level information that traditional aligners provide.
+
+First we need to create a index of the transcript. Download the file "Zmays_833_Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.fa" and load to your working directory. In the folder where you placed this file run: (In this example I am placing it in the folder "input")
+
+```bash
+ml kallisto/0.46
+kallisto index -i Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.idx Zmays_833_Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.fa.gz
+```
+
+We then can map all the reads from "*paired.gz" files.
+
+```bash
+# Ensure the output directory exists:
+mkdir out.kallisto
+
+nano kallisto.slurm
+#copy paste the following code
+
+#!/bin/sh
+#SBATCH --array=1-6
+#SBATCH --job-name=quant
+#SBATCH --time=1-00:00:00
+#SBATCH --mem-per-cpu=10GB
+#SBATCH --output=../log.out/%x_%a.out
+#SBATCH --partition=schnablelab,batch
+#SBATCH --mail-type=ALL
+
+ml load kallisto/0.46
+
+samplesheet="files.path.txt"
+f=`sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet |  awk '{print $1}'`
+o=`echo ${f} | cut -d'/' -f3-`
+
+kallisto quant --threads=10 -i ../input/Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.idx -o out.kallisto/${o} ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/output/${o}/${o}_2_paired.fastq.gz
+```
+
+This will create a folder for each individual with the following files:
+
+	1.	abundance.tsv: This is the primary output file, which contains transcript-level expression estimates. It includes the following columns:
+	•	target_id: The transcript ID (usually matching the transcript IDs in the reference transcriptome).
+	•	length: The length of each transcript.
+	•	eff_length: The effective length of the transcript, adjusted for read length.
+	•	est_counts: The estimated number of reads assigned to each transcript.
+	•	tpm: Transcripts per million, a normalized measure of expression.
+	2.	abundance.h5: A binary file containing all abundance information in HDF5 format. This file is used by downstream tools, such as Sleuth, to perform differential expression analysis and provides more efficient data storage and access than a plain text file.
+	3.	run_info.json: A JSON file containing metadata about the run, including the Kallisto version, the command used, the number of processed reads, and the total runtime. This file is useful for tracking parameters and ensuring reproducibility.
+
+
+## Step 7: final gene expression table
+
+...
+
+
 
 
