@@ -222,7 +222,7 @@ samplesheet="files.path.txt"
 f=`sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet |  awk '{print $1}'`
 o=`echo ${f} | cut -d'/' -f3-`
 
-kallisto quant --threads=10 -i ../input/Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.idx -o ../input/out.kallisto/${o} ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/output/${o}/${o}_2_paired.fastq.gz
+kallisto quant --threads=10 -i ../input/Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.idx -o ../input/out.kallisto/${o} ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/${o}/${o}_2_paired.fastq.gz
 ```
 
 This will create a folder for each individual with the following files:
