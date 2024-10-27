@@ -202,7 +202,7 @@ We then can map all the reads from "*paired.gz" files.
 
 ```bash
 # Ensure the output directory exists:
-mkdir out.kallisto
+mkdir ../input/out.kallisto
 
 nano kallisto.slurm
 #copy paste the following code
@@ -222,23 +222,72 @@ samplesheet="files.path.txt"
 f=`sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet |  awk '{print $1}'`
 o=`echo ${f} | cut -d'/' -f3-`
 
-kallisto quant --threads=10 -i ../input/Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.idx -o out.kallisto/${o} ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/output/${o}/${o}_2_paired.fastq.gz
+kallisto quant --threads=10 -i ../input/Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.idx -o ../input/out.kallisto/${o} ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/output/${o}/${o}_2_paired.fastq.gz
 ```
 
 This will create a folder for each individual with the following files:
 
-	1.	abundance.tsv: This is the primary output file, which contains transcript-level expression estimates. It includes the following columns:
-	•	target_id: The transcript ID (usually matching the transcript IDs in the reference transcriptome).
-	•	length: The length of each transcript.
-	•	eff_length: The effective length of the transcript, adjusted for read length.
-	•	est_counts: The estimated number of reads assigned to each transcript.
-	•	tpm: Transcripts per million, a normalized measure of expression.
-	2.	abundance.h5: A binary file containing all abundance information in HDF5 format. This file is used by downstream tools, such as Sleuth, to perform differential expression analysis and provides more efficient data storage and access than a plain text file.
-	3.	run_info.json: A JSON file containing metadata about the run, including the Kallisto version, the command used, the number of processed reads, and the total runtime. This file is useful for tracking parameters and ensuring reproducibility.
+1. **abundance.tsv**: This is the primary output file, which contains transcript-level expression estimates. It includes the following columns:
+   - `target_id`: The transcript ID (usually matching the transcript IDs in the reference transcriptome).
+   - `length`: The length of each transcript.
+   - `eff_length`: The effective length of the transcript, adjusted for read length.
+   - `est_counts`: The estimated number of reads assigned to each transcript.
+   - `tpm`: Transcripts per million, a normalized measure of expression.
+
+2. **abundance.h5**: A binary file containing all abundance information in HDF5 format. This file is used by downstream tools, such as Sleuth, to perform differential expression analysis and provides more efficient data storage and access than a plain text file.
+
+3. **run_info.json**: A JSON file containing metadata about the run, including the Kallisto version, the command used, the number of processed reads, and the total runtime. This file is useful for tracking parameters and ensuring reproducibility.
 
 
 ## Step 7: final gene expression table
 
+Create a new pyhton file:
+```bash
+nano make_rna_ss.py
+```
+paste inside the code:
+
+```python
+import os
+import sys
+
+mydir = sys.argv[1]
+if not os.path.exists(mydir):
+    sys.exit("{0} is not a valid directory".format(mydir))
+
+gene_exp_dict = {}
+sample_list = []
+mysamples = os.listdir(mydir)
+for asample in mysamples:
+    if not os.path.isdir(mydir + "/" + asample): continue
+    if not os.path.exists(mydir + "/" + asample + "/" + "abundance.tsv"): continue
+    fh = open(mydir + "/" + asample + "/" + "abundance.tsv")
+    sample_list.append(asample)
+    fh.readline()
+    for x in fh:
+        y = x.strip().split('\t')
+        mygene = y[0]
+        mytpm = float(y[-1])
+        if not mygene in gene_exp_dict: gene_exp_dict[mygene] = {}
+        gene_exp_dict[mygene][asample] = mytpm
+    fh.close()
+#print(sample_list)
+#print(gene_exp_dict[list(gene_exp_dict)[0]])
+fh = open("merged_gene_tpms.csv",'w') #change with the desire name for output
+myheader = ["GeneID"] + sorted(sample_list)
+fh.write(",".join(myheader)+"\n")
+for agene in sorted(list(gene_exp_dict)):
+    plist = [agene]
+    for asample in sorted(sample_list):
+        plist.append(gene_exp_dict[agene][asample])
+    fh.write(",".join(map(str,plist))+"\n")
+```
+
+Run it:
+
+```bash
+python3 make_rna_ss.py ../input/out.kallisto
+```
 ...
 
 
