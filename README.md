@@ -41,22 +41,135 @@ ls ../fasta | wc -l # displays the number of files, for this example should be 1
 zcat ../fasta/2369_1.fastq.gz | head
 
 ```
-## Step 2: Check quality of the data
-We can use fastqc and multiqc
+## Step 3: Check quality of the data
+We can use [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) and [MultiQC](https://github.com/MultiQC/MultiQC)
 
 First, run and example for "2369_1.fastq.gz". Please measure the time with a stopwatch (around 3 min per sample).
 ```bash
+ml fastqc #if the module is not loaded
 fastqc ../fasta/2369_1.fastq.gz -o ../fasta/fastqc_reports
 ```
-If we are running few samples we can adjust the code to run like (see below), but the time can increase massivaly (i.e for 12 samples = 36 min but what if we use the 1,500 samples)
+If we are running few samples we can adjust the code to run like (see below), but the time can increase massively (i.e for 12 samples = 36 min but what if we use the 1,500 samples)
 ```bash
 fastqc ../fasta/*.fastq.gz -o ../fasta/fastqc_reports
 ```
 We will run jobs using slurm files and the array option:
 
 ```bash
-xx
+nano fastqc.slurm # to create a new slurm file
+sbatch fastqc.slurm # to run the file
+
+#the file will include
+
+#!/bin/sh
+#SBATCH --array=1-12
+#SBATCH --job-name=fastqc
+#SBATCH --time=3-00:00:00
+#SBATCH --mem-per-cpu=10GB
+#SBATCH --output=../log.out/%x_%a.out
+#SBATCH --partition=schnablelab,batch
+#SBATCH --mail-type=ALL
+
+# Load FastQC module
+module load fastqc
+
+# Define the list of samples and get the current sample
+SAMPLE_FILE="samples.txt"
+SAMPLE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $SAMPLE_FILE)
+echo ${SAMPLE}
+
+# Run FastQC on the selected sample
+fastqc ${SAMPLE} -o ../fasta/fastqc_reports
+```
+Then we can use MultiQC to aggregate all the reports
+
+```bash
+ml multiqc #if the module is not loaded
+multiqc ../fasta/fastqc_reports -o ../fasta/multiqc_report
+```
+## Step 4: Remove adapters and low quality bases
+This step uses [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic)
+
+The order is important! Trimming occurs in the order in which the steps are specified on the command line. It is recommended that adapter clipping (ILLUMINACLIP) is done as early as possible.
+
+Since we know now how to parallelize, let's use arrays (but still each job will take ~20 minutes. We suggest to download data from xx and placed as folder "fasta.trimmed")
+
+We can find multiple [adapter](https://github.com/usadellab/Trimmomatic/tree/main/adapters) libraries in the Trimmomatic GitHub page.
+
+```bash
+#to create a file with the name of the individuals
+find ../fasta -name "*_1.fastq.gz" | sed 's/_1.fastq.gz//g' > files.path.txt
+
+# first create this folder:
+mkdir ../fasta.trimmed
+
+nano trimmomatic.slurm
+sbatch trimmomatic.slurm
+
+#the file will include
+
+#!/bin/sh
+#SBATCH --array=1-6
+#SBATCH --job-name=trimm
+#SBATCH --time=1-00:00:00
+#SBATCH --mem-per-cpu=10GB
+#SBATCH --output=../log.out/%x_%a.out
+#SBATCH --partition=schnablelab,batch
+#SBATCH --mail-type=ALL
+
+ml load trimmomatic/0.33
+ml load java/12
+
+samplesheet="files.path.txt"
+f=`sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet |  awk '{print $1}'`
+o=`echo ${f} | cut -d'/' -f3-`
+
+mkdir ../fasta.trimmed/${o}
+
+java -jar $TM_HOME/trimmomatic.jar PE -phred33 ${f}_R1_001.fastq.gz ${f}_R2_001.fastq.gz ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/${o}/${o}_1_unpaired.fastq.gz output/${o}/${o}_2_paired.fastq.gz ../fasta.trimmed/${o}/${o}_2_unpaired.fastq.gz ILLUMINACLIP:../TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:35
+
+```
+## Step 5: check quality after removing adapters and low quality bases
+
+We will run jobs using slurm files and the array option:
+
+```bash
+mkdir ../fasta.trimmed/fastqc_reports
+nano fastqc2.slurm # to create a new slurm file
+sbatch fastqc2.slurm # to run the file
+
+#the file will include
+
+#!/bin/sh
+#SBATCH --array=1-12
+#SBATCH --job-name=fastqc2
+#SBATCH --time=3-00:00:00
+#SBATCH --mem-per-cpu=10GB
+#SBATCH --output=../log.out/%x_%a.out
+#SBATCH --partition=schnablelab,batch
+#SBATCH --mail-type=ALL
+
+# Load FastQC module
+module load fastqc
+
+# find ../fasta.trimmed -name "*_paired.fastq.gz" > samples.trimmed.txt
+
+# Define the list of samples and get the current sample
+SAMPLE_FILE="samples.trimmed.txt"
+SAMPLE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $SAMPLE_FILE)
+echo ${SAMPLE}
+
+# Run FastQC on the selected sample
+fastqc ${SAMPLE} -o ../fasta.trimmed/fastqc_reports
+```
+Then we can use MultiQC to aggregate all the reports
+
+```bash
+ml multiqc #if the module is not loaded
+multiqc ../fasta.trimmed/fastqc_reports -o ../fasta.trimmed/multiqc_report
 ```
 
-...
+## Step 6: Quantify gene expression
+This step will use Kallisto. 
+
 
