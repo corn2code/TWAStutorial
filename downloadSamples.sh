@@ -1,0 +1,12 @@
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177542/DK3IBZ2_1.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177187/38-11_1.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177172/2MA22_1.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177187/38-11_2.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177171/2369_2.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177542/DK3IBZ2_2.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177184/793_1.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177181/33-16_1.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177172/2MA22_2.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177181/33-16_2.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177171/2369_1.fastq.gz
+wget -nc -P ../fasta ftp://ftp.sra.ebi.ac.uk/vol1/run/ERR121/ERR12177184/793_2.fastq.gz

@@ -1,0 +1,12 @@
+../fasta/DK3IBZ2_1.fastq.gz
+../fasta/38-11_1.fastq.gz
+../fasta/2MA22_1.fastq.gz
+../fasta/38-11_2.fastq.gz
+../fasta/2369_2.fastq.gz
+../fasta/DK3IBZ2_2.fastq.gz
+../fasta/793_1.fastq.gz
+../fasta/33-16_1.fastq.gz
+../fasta/2MA22_2.fastq.gz
+../fasta/33-16_2.fastq.gz
+../fasta/2369_1.fastq.gz
+../fasta/793_2.fastq.gz
