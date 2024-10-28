@@ -143,7 +143,7 @@ you can submit the job with:
 sbatch trimmomatic.slurm
 ```
 
-## Step 5: check quality after removing adapters and low-quality bases
+## Step 5: Check quality after removing adapters and low-quality bases
 
 We will run jobs using slurm files and the array option:
 
@@ -241,7 +241,7 @@ This will create a folder for each individual with the following files:
 3. **run_info.json**: A JSON file containing metadata about the run, including the Kallisto version, the command used, the number of processed reads, and the total runtime. This file is useful for tracking parameters and ensuring reproducibility.
 
 
-## Step 7: final gene expression table
+## Step 7: Final gene expression table
 
 Create a new python file:
 ```bash
