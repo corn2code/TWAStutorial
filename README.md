@@ -100,12 +100,13 @@ Since we know now how to parallelize, let's use arrays (but still each job will 
 
 We can find multiple [adapter](https://github.com/usadellab/Trimmomatic/tree/main/adapters) libraries in the Trimmomatic GitHub page.
 
-create a file with the the location of the fastq files:
+Create a file with the location of the fastq files:
 ```bash
 #to create a file with the name of the individuals (six in this example))
 find ../fasta -name "*_1.fastq.gz" | sed 's/_1.fastq.gz//g' > files.path.txt
 ```
 
+This step will take ~20-25 min per sample (I suggest to use the samples provided in the folder to download to save some time but you are welcome to run this anytime)
 
 ```bash
 # first create this folder:
@@ -191,7 +192,7 @@ This step will use [Kallisto](https://pachterlab.github.io/kallisto/manual).
 
 Kallisto’s pseudo-alignment approach makes it exceptionally fast and memory-efficient, suitable for analyzing large RNA-Seq datasets. It’s widely used in gene expression studies due to its accuracy and speed, though it may lack the detailed read-level information that traditional aligners provide.
 
-First we need to create a index of the transcript. Download the file "Zmays_833_Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.fa" and load to your working directory. In the folder where you placed this file run: (In this example I am placing it in the folder "input")
+First we need to create an index of the transcript. Download the file "Zmays_833_Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.fa" and load it to your working directory. In the folder where you placed this file run: (In this example I am placing it in the folder "input")
 
 ```bash
 ml kallisto/0.46
