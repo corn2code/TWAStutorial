@@ -45,7 +45,7 @@ fastqc ../fasta/2369_1.fastq.gz -o ../fasta/fastqc_reports
 ```
 
 ### Run FastQC on multiple samples using SLURM
-Create a `fastqc.slurm` file with the following code:
+Create a `fastqc.slurm` file with the following code: (you can type `nano fastqc.slurm`)
 
 ```bash
 #!/bin/sh
@@ -230,4 +230,5 @@ The following Python script merges all `abundance.tsv` files into a single gene 
    python3 make_rna_ss.py ../input/out.kallisto
    ```
 
-The resulting file `merged_gene_tpms.csv` will contain the TPM values for each gene across all samples.
+The resulting file `merged_gene_tpms.csv` will contain the TPM values for each gene across all samples. This example was with just six individuals, the complete gene expression dataset is located in the [Figshare link](https://figshare.com/articles/dataset/merged_gene_tpms_longestT_csv_zip/24470758?file=42997288)
+
