@@ -290,7 +290,7 @@ Run it:
 ```bash
 python3 make_rna_ss.py ../input/out.kallisto
 ```
-The final output is the file named "merged_gene_tpms.csv". This example was with just six individuals the complete gene expression dataset is located in the [Figshare link](https://figshare.com/articles/dataset/merged_gene_tpms_longestT_csv_zip/24470758?file=42997288)
+The final output is the file named "merged_gene_tpms.csv". This example was with just six individuals, the complete gene expression dataset is located in the [Figshare link](https://figshare.com/articles/dataset/merged_gene_tpms_longestT_csv_zip/24470758?file=42997288)
 
 
 
