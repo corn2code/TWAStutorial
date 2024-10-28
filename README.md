@@ -1,8 +1,8 @@
 # Tutorial TWAS (part 1: get expression data from RNA-Seq data)
 
-The tutorial asumes the student has basic coding knowledge in Bash, Python, and R.
+The tutorial assumes the student has basic coding knowledge in Bash, Python, and R.
 
-Big data including: trimmed fasta files and the .idx file to run Kallisto are in the Figshare [link](https://figshare.com/articles/dataset/TWAS_tutorial/27312822)
+Big data including trimmed fasta files and the *.idx file to run Kallisto are in the Figshare [link](https://figshare.com/articles/dataset/TWAS_tutorial/27312822)
 
 This tutorial is a guide to perform TWAS with the data used in [Torres‐Rodríguez, J. Vladimir, et al. "Population‐level gene expression can repeatedly link genes to functions in maize." The Plant Journal (2024)](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.16801).
 
@@ -38,20 +38,20 @@ ls ../fasta
 ls ../fasta -lh # -lh displays more information
 ls ../fasta | wc -l # displays the number of files, for this example should be 12 belonging to six individuals (for example 2369_1.fastq.gz & 2369_2.fastq.gz)
 
-#if you want to open the faste file you can use, you can se multiple lines for each
+#if you want to open the fasta file you can use:
 #for more information check: https://en.wikipedia.org/wiki/FASTQ_format
 zcat ../fasta/2369_1.fastq.gz | head
 
 ```
-## Step 3: Check quality of the data
+## Step 3: Check the quality of the data
 We can use [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) and [MultiQC](https://github.com/MultiQC/MultiQC)
 
-First, run and example for "2369_1.fastq.gz". Please measure the time with a stopwatch (around 3 min per sample).
+First, run an example for "2369_1.fastq.gz". Please measure the time with a stopwatch (around 3 minutes per sample).
 ```bash
-ml fastqc #if the module is not loaded
+ml fastqc/0.12 #if the module is not loaded
 fastqc ../fasta/2369_1.fastq.gz -o ../fasta/fastqc_reports
 ```
-If we are running few samples we can adjust the code to run like (see below), but the time can increase massively (i.e for 12 samples = 36 min but what if we use the 1,500 samples)
+If we are running a few samples we can adjust the code to run like this (see below), but the time can increase massively (i.e for 12 samples = 36 min but what if we use the 1,500 samples)
 ```bash
 fastqc ../fasta/*.fastq.gz -o ../fasta/fastqc_reports
 ```
@@ -71,7 +71,7 @@ nano fastqc.slurm # to create a new slurm file
 #SBATCH --mail-type=ALL
 
 # Load FastQC module
-module load fastqc
+ml fastqc/0.12
 
 # Define the list of samples and get the current sample
 SAMPLE_FILE="samples.txt"
@@ -84,7 +84,7 @@ fastqc ${SAMPLE} -o ../fasta/fastqc_reports
 Then we can use MultiQC to aggregate all the reports
 
 ```bash
-ml multiqc #if the module is not loaded
+ml multiqc/py37/1.8 #if the module is not loaded
 multiqc ../fasta/fastqc_reports -o ../fasta/multiqc_report
 ```
 you can submit the job with:
@@ -93,12 +93,12 @@ you can submit the job with:
 sbatch fastqc.slurm # to run the file
 ```
 
-## Step 4: Remove adapters and low quality bases
+## Step 4: Remove adapters and low-quality bases
 This step uses [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic)
 
 The order is important! Trimming occurs in the order in which the steps are specified on the command line. It is recommended that adapter clipping (ILLUMINACLIP) is done as early as possible.
 
-Since we know now how to parallelize, let's use arrays (but still each job will take ~20 minutes. We suggest to download data from xx and placed as folder "fasta.trimmed")
+Since we know now how to parallelize, let's use arrays (This step will take ~20-25 min per sample (I suggest to download the samples provided in the folder "fasta.trimmed" from the figshare repository [see above] to save some time but you are welcome to run this anytime))
 
 We can find multiple [adapter](https://github.com/usadellab/Trimmomatic/tree/main/adapters) libraries in the Trimmomatic GitHub page.
 
@@ -108,7 +108,6 @@ Create a file with the location of the fastq files:
 find ../fasta -name "*_1.fastq.gz" | sed 's/_1.fastq.gz//g' > files.path.txt
 ```
 
-This step will take ~20-25 min per sample (I suggest to use the samples provided in the folder to download to save some time but you are welcome to run this anytime)
 
 ```bash
 # first create this folder:
@@ -126,8 +125,8 @@ nano trimmomatic.slurm
 #SBATCH --partition=schnablelab,batch
 #SBATCH --mail-type=ALL
 
-ml load trimmomatic/0.33
-ml load java/12
+ml trimmomatic/0.33
+ml java/12
 
 samplesheet="files.path.txt"
 f=`sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet |  awk '{print $1}'`
@@ -144,7 +143,7 @@ you can submit the job with:
 sbatch trimmomatic.slurm
 ```
 
-## Step 5: check quality after removing adapters and low quality bases
+## Step 5: check quality after removing adapters and low-quality bases
 
 We will run jobs using slurm files and the array option:
 
@@ -164,7 +163,7 @@ nano fastqc2.slurm # to create a new slurm file
 #SBATCH --mail-type=ALL
 
 # Load FastQC module
-module load fastqc
+ml fastqc
 
 # find ../fasta.trimmed -name "*_paired.fastq.gz" > samples.trimmed.txt
 
@@ -244,7 +243,7 @@ This will create a folder for each individual with the following files:
 
 ## Step 7: final gene expression table
 
-Create a new pyhton file:
+Create a new python file:
 ```bash
 nano make_rna_ss.py
 ```
@@ -291,7 +290,7 @@ Run it:
 ```bash
 python3 make_rna_ss.py ../input/out.kallisto
 ```
-...
+The final output is the file named "merged_gene_tpms.csv". This example was with just six individuals the complete gene expression dataset is located in the [Figshare link](https://figshare.com/articles/dataset/merged_gene_tpms_longestT_csv_zip/24470758?file=42997288)
 
 
 
