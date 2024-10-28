@@ -2,6 +2,8 @@
 
 The tutorial asumes the student has basic coding knowledge in Bash, Python, and R.
 
+Big data including: trimmed fasta files and the .idx file to run Kallisto are in the Figshare [link](https://figshare.com/articles/dataset/TWAS_tutorial/27312822)
+
 This tutorial is a guide to perform TWAS with the data used in [Torres‐Rodríguez, J. Vladimir, et al. "Population‐level gene expression can repeatedly link genes to functions in maize." The Plant Journal (2024)](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.16801).
 
 This first part of the tutorial aims to show the process of obtaining the expression data needed to perform TWAS.
