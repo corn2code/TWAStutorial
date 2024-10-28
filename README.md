@@ -1,4 +1,4 @@
-# Tutorial TWAS (part 1: get expression data from RNA-Seq data)
+# Tutorial TWAS (part 1: get gene expression levels from RNA-Seq data)
 
 The tutorial assumes the student has basic coding knowledge in Bash, Python, and R.
 
