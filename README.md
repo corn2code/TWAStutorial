@@ -22,7 +22,7 @@ cd TWASTutorial
 ```
 
 ## Step 2: Download data
-We are downloading raw data from the [European Nucleotide Archive (ENA)](https://www.ebi.ac.uk/ena/browser/home) under the study accession number: PRJEB67964. This data includes RNA-Seq from 750 maize individuals (1,500 files) collected from leaves at the mature stage in Nebraska in 2020. But for teaching purposes, we are downloading only 12 samples belonging to six individuals 
+We are downloading raw data from the [European Nucleotide Archive (ENA)](https://www.ebi.ac.uk/ena/browser/home) under the study accession number: PRJEB67964. This data includes RNA-Seq from 750 maize individuals (1,500 files) collected from leaves at the mature stage in Nebraska in 2020. _But for teaching purposes, we are downloading only 12 samples belonging to six individuals_
 
 Download the script "downloadSamples.sh", move it to folder 'scripts' and run it. The code provided will run in the Background
 
