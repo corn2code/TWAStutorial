@@ -443,7 +443,7 @@ associatedGenes <- gwas.datTWAS[which(gwas.datTWAS$FDR < 0.05),]
 fwrite(associatedGenes, "associatedGenes.csv")
 ```
 
-![Manhattan plot](plot.jpg)
+![Manhattan plot](Plot.jpg)
 
 ## Step 4: Look for information of associated genes
 Once we generate the file we can open it and see which is the gene ID. We are using as an example "Zm00001eb057540".
