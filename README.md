@@ -318,32 +318,30 @@ Please download the data to your working directory. All data is in the folder "I
 We are going to use [GAPIT](https://zzlab.net/GAPIT/) to perform the analysis. TWAS is fast and can be run on a local computer or in the cluster. The code provided here was run in a local computer
 
 ```R
+setwd("/Users/vladimir/TWAS_tutorial")
+
 source("http://zzlab.net/GAPIT/gapit_functions.txt") #install GAPIT
 
 #install.packages("data.table") # if not installed please install.
 library("data.table") # load library
 
-pathout <- "out.TWAS/"
 
 #load the phenotype data
 phe <- read.table("pheno_693.txt", head = TRUE)
-trait=which(colnames(phe) == "Anthesis.NE") # Our data has several columns, we are selecting one based on column name
+trait=which(colnames(phe) == "Anthesis.sp.NE") # Our data has several columns, we are selecting one based on column name
 colnames(phe[trait])
 
+myY <- phe[,c(1,trait)]
+
 #covariates
-covariates <- read.csv("sampling_693.order.csv", head = TRUE)
-#colnames(covariates) #DaysToPollen
-
-myCV <- covariates
+myCV <- read.csv("sampling_693.order.csv", head = TRUE)
 colnames(myCV)
-myCV2 <- myCV[,-c(2)]
-colnames(myCV2)
-
 
 #load counts data
 counts <- fread("counts.NE2020.693.filtered.txt", data.table = F)
 row.names(counts) <- counts$taxa
 
+## check the number of lines matching
 NROW(merge(counts[,1], phe, by = 1))
 
 
@@ -354,23 +352,19 @@ Quantile<- apply(counts[,-1],2,  # 2 indicates it is for column and 1 indicates 
                  out<-(2*(A-min_x)/(max_x-min_x));
                  out[out>2]<-2;out[out< 0]<- 0;return(out)})
 
-#Quantile.t <-  as.data.frame(t(Quantile))
+
 Quantile.t <- as.data.frame(Quantile)
 Quantile.t$taxa <- row.names(Quantile.t)
 myGD <-  Quantile.t[,c(ncol(Quantile.t),1: (ncol(Quantile.t)-1))]
 
 
-myY <- cbind(phe[,1],phe[trait])
-colnames(myY)[1] <- "taxa"
-
-
 myGM <- read.table("gene_info_693.txt", head = TRUE)
 unique(myGM$chr) #only cromosomes 
 
-myGAPIT <- GAPIT(Y=myY[myY$taxa %in% myGD$taxa,],
+myGAPIT <- GAPIT(Y=myY,
                  GD=myGD,
                  GM=myGM,
-                 CV=myCV2,
+                 CV=myCV,
                  PCA.total=3,
                  model= "CMLM",
                  SNP.MAF=0,
@@ -382,15 +376,74 @@ myGAPIT <- GAPIT(Y=myY[myY$taxa %in% myGD$taxa,],
 values <- data.frame(myGAPIT$GWAS)
 values$FDR <- p.adjust(values$P.value,method = "BH")
 
-write.csv(values, paste0(pathout,"TWAS.CMLM_",colnames(phe[trait]),".csv"), row.names = F)
+write.csv(values, paste0("TWAS.CMLM_",colnames(phe[trait]),".csv"), row.names = F)
 ```
 
 ## Step 3: Make the Manhattan plot and extract the genes with significant association
 
+```R
+setwd("/Users/vladimir/TWAS_tutorial")
+
+library(dplyr)
+library(ggplot2)
+library(ggrastr)
+
+#set parameters to the plot
+theme_set(theme_classic(base_size = 19))
+theme_update(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black"),
+             plot.title = element_text(hjust = 0.5), plot.subtitle=element_text(hjust=0.5))
+
+
+trait <- "Anthesis.sp.NE"
+gwas.datTWAS <- fread(paste0("TWAS.CMLM_",trait,".csv"), data.table = F)
+
+#creating variables that will help with the plot
+nCHR <- length(unique(gwas.datTWAS$Chromosome))
+gwas.datTWAS$BPcum <- NA
+s <- 0
+nbp <- c()
+
+for (i in sort(unique(gwas.datTWAS$Chromosome))){
+  nbp[i] <- max(gwas.datTWAS[gwas.datTWAS$Chromosome == i,]$`Position.`)
+  gwas.datTWAS[gwas.datTWAS$Chromosome == i,"BPcum"] <- gwas.datTWAS[gwas.datTWAS$Chromosome == i,"Position."] + s
+  s <- s + nbp[i]
+}
+
+axis.set <- gwas.datTWAS %>% 
+  group_by(Chromosome) %>% 
+  summarize(center = (max(BPcum) + min(BPcum)) / 2, maxBP=max(BPcum))
+
+#IDs for genes with FDR less than 0.05
+fdr.treshold <- -log10(0.05)
+
+gTWAS.anthesis.NE <- ggplot(data=gwas.datTWAS, aes(BPcum, -log10(FDR), colour=factor(Chromosome, levels = c(1:10)))) + 
+  #rasterise(geom_point(size = 2),dpi=600) + 
+  geom_point(size = 2) + 
+  geom_hline(yintercept = -log10(0.05), linetype=2) + 
+  scale_color_manual(values = c('#03193F','#28708C','#BF930F','#0f3bbf','#295E52','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a')) + 
+  annotate("text", label="Anthesis Nebraska", y=19.5, x=100, size=5,hjust="inward") +
+  scale_x_continuous(label = axis.set$Chromosome, breaks = axis.set$center) + 
+  theme(legend.position = "none", axis.title.x=element_blank()) + 
+  ylab(expression(-log[10](FDR))) + 
+  xlab("Chromosome") +
+  scale_y_continuous(limits = c(0, 20),
+                     breaks = seq(1, 20, 2))
+#+ labs(title="", subtitle=paste0(trait))
+
+gTWAS.anthesis.NE
+
+##############
+
+#To extract genes ID associated
+
+associatedGenes <- gwas.datTWAS[which(gwas.datTWAS$FDR < 0.05),]
+fwrite(associatedGenes, "associatedGenes.csv")
+```
 
 ## Step 4: look for information of associated genes
+Once we generate the file we can open it and see which is the gene ID. We are using as an example "Zm00001eb057540".
 
-
+Depending on the specie you are working you can look at multiple pages, for maize we have [MaizeGDB](https://www.maizegdb.org), [Phytozome](https://phytozome-next.jgi.doe.gov) or simply google the gene ID or Google Scholar. Remember that a single gene can have multiple IDs (one for each version)
 
 
 
