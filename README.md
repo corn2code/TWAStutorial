@@ -310,12 +310,12 @@ Two different criteria used in the original paper:
 1. **PCA distribution**: If a sample was an outlier based on a PCA conducted with gene expression, the sample was removed.
 2. **Low expressed genes**: If a gene was expressed lower than 0.1 TPM in less than 50% of the samples, the gene was removed.
 
-Applying these criteria the resulting gene expression dataset is "", which can be downloaded from this repository.
+Applying these criteria the resulting gene expression dataset is "counts.NE2020.693.filtered.txt", which can be downloaded from the [Figshare repository](https://figshare.com/articles/dataset/TWAS_tutorial/27312822).
 
 ## Step 2: Run TWAS
-Please download the data to your working directory.
+Please download the data to your working directory. All data is in the folder "InputFiles.zip", which can be downloaded from the [Figshare repository](https://figshare.com/articles/dataset/TWAS_tutorial/27312822).
 
-We are going to use GAPIT to perform the analysis. TWAS is fast and can be run on a local computer or in the cluster. The code provided here was run in a local computer
+We are going to use [GAPIT](https://zzlab.net/GAPIT/) to perform the analysis. TWAS is fast and can be run on a local computer or in the cluster. The code provided here was run in a local computer
 
 ```R
 source("http://zzlab.net/GAPIT/gapit_functions.txt") #install GAPIT
