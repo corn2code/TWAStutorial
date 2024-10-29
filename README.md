@@ -136,7 +136,7 @@ o=`echo ${f} | cut -d'/' -f3-`
 
 mkdir ../fasta.trimmed/${o}
 
-java -jar $TM_HOME/trimmomatic.jar PE -phred33 ${f}_R1_001.fastq.gz ${f}_R2_001.fastq.gz ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/${o}/${o}_1_unpaired.fastq.gz output/${o}/${o}_2_paired.fastq.gz ../fasta.trimmed/${o}/${o}_2_unpaired.fastq.gz ILLUMINACLIP:../TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:35
+java -jar $TM_HOME/trimmomatic.jar PE -phred33 ${f}_1.fastq.gz ${f}_2.fastq.gz ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/${o}/${o}_1_unpaired.fastq.gz output/${o}/${o}_2_paired.fastq.gz ../fasta.trimmed/${o}/${o}_2_unpaired.fastq.gz ILLUMINACLIP:../TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:35
 
 ```
 you can submit the job with:
@@ -195,7 +195,7 @@ This step will use [Kallisto](https://pachterlab.github.io/kallisto/manual).
 
 Kallisto’s pseudo-alignment approach makes it exceptionally fast and memory-efficient, suitable for analyzing large RNA-Seq datasets. It’s widely used in gene expression studies due to its accuracy and speed, though it may lack the detailed read-level information that traditional aligners provide.
 
-First we need to create an index of the transcript. Download the file "Zmays_833_Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.fa" and load it to your working directory. In the folder where you placed this file run: (In this example I am placing it in the folder "input")
+First, we need to create an index of the transcript. Download the file "Zmays_833_Zm-B73-REFERENCE-NAM-5.0.55.transcript_primaryTranscriptOnly.fa" and load it to your working directory. In the folder where you placed this file run: (In this example I am putting it in the folder "input")
 
 ```bash
 ml kallisto/0.46
