@@ -1,5 +1,9 @@
 # Tutorial for Transcriptome-Wide Association Study (TWAS)
-**Part 1: Obtaining Gene Expression Levels from RNA-Seq Data**
+
+- [Part 1: Obtaining Gene Expression Levels from RNA-Seq Data](#part-1-obtaining-gene-expression-levels-from-rna-seq-data)
+- [Part 2: Transcriptome-Wide Association Study (TWAS)](#part-2-transcriptome-wide-association-study-twas)
+
+## Part 1: Obtaining Gene Expression Levels from RNA-Seq Data
 
 This tutorial guides you through obtaining gene expression data to perform TWAS. It is based on data used in the paper [Torres‐Rodríguez, J. Vladimir, et al., 2024, "Population‐level gene expression can repeatedly link genes to functions in maize"](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.16801).
 
@@ -295,7 +299,7 @@ python3 make_rna_ss.py ../input/out.kallisto
 The final output is the file named "merged_gene_tpms.csv". This example was with just six individuals, the complete gene expression dataset is located in the [Figshare link](https://figshare.com/articles/dataset/merged_gene_tpms_longestT_csv_zip/24470758?file=42997288)
 
 
-**Part 2: Transcriptome-Wide Association Study (TWAS)**
+## Part 2: Transcriptome-Wide Association Study (TWAS)
 
 ## Step 1: Pre-process data
 To save some time we will provide information on the files needed to run TWAS and how data was filtered, but the code is not provided, rather the files can be downloaded from the folder "InputFiles.zip" in the [Figshare repository](https://figshare.com/articles/dataset/TWAS_tutorial/27312822)
