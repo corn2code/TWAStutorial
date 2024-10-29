@@ -443,7 +443,9 @@ associatedGenes <- gwas.datTWAS[which(gwas.datTWAS$FDR < 0.05),]
 fwrite(associatedGenes, "associatedGenes.csv")
 ```
 
-## Step 4: look for information of associated genes
+![Manhattan plot](plot.jpg)
+
+## Step 4: Look for information of associated genes
 Once we generate the file we can open it and see which is the gene ID. We are using as an example "Zm00001eb057540".
 
 Depending on the specie you are working you can look at multiple pages, for maize we have [MaizeGDB](https://www.maizegdb.org), [Phytozome](https://phytozome-next.jgi.doe.gov) or simply google the gene ID or Google Scholar. Remember that a single gene can have multiple IDs (one for each version)
