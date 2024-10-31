@@ -37,7 +37,7 @@ Download the script "downloadSamples.sh", move it to folder 'scripts' and run it
 chmod +x downloadFiveSamples.sh
 
 #Execute the Script
-./downloadFiveSamples.sh > download_log.txt 2>&1
+./downloadSamples.shs.sh > download_log.txt 2>&1
 
 #check if the files exist
 ls ../fasta
