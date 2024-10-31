@@ -34,10 +34,10 @@ Download the script "downloadSamples.sh", move it to folder 'scripts' and run it
 
 ```bash
 #Run this command to give the script executable permissions:
-chmod +x downloadFiveSamples.sh
+chmod +x downloadSamples.sh
 
 #Execute the Script
-./downloadSamples.shs.sh > download_log.txt 2>&1
+./downloadSamples.sh > download_log.txt 2>&1
 
 #check if the files exist
 ls ../fasta
