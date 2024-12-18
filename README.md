@@ -140,7 +140,7 @@ o=`echo ${f} | cut -d'/' -f3-`
 
 mkdir ../fasta.trimmed/${o}
 
-java -jar $TM_HOME/trimmomatic.jar PE -phred33 ${f}_1.fastq.gz ${f}_2.fastq.gz ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/${o}/${o}_1_unpaired.fastq.gz output/${o}/${o}_2_paired.fastq.gz ../fasta.trimmed/${o}/${o}_2_unpaired.fastq.gz ILLUMINACLIP:../TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:35
+java -jar $TM_HOME/trimmomatic.jar PE -phred33 ${f}_1.fastq.gz ${f}_2.fastq.gz ../fasta.trimmed/${o}/${o}_1_paired.fastq.gz ../fasta.trimmed/${o}/${o}_1_unpaired.fastq.gz ../fasta.trimmed/${o}/${o}_2_paired.fastq.gz ../fasta.trimmed/${o}/${o}_2_unpaired.fastq.gz ILLUMINACLIP:../TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:35
 
 ```
 you can submit the job with:
