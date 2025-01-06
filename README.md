@@ -5,7 +5,7 @@
 
 ## Part 1: Obtaining Gene Expression Levels from RNA-Seq Data
 
-This tutorial guides you through obtaining gene expression data to perform TWAS. It is based on data used in the paper [Torres‐Rodríguez, J. Vladimir, et al., 2024, "Population‐level gene expression can repeatedly link genes to functions in maize"](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.16801).
+This tutorial guides you through obtaining gene expression data to perform TWAS. It is based on data used in the paper [Torres‐Rodríguez, J. Vladimir, et al., 2024, "Population‐level gene expression can repeatedly link genes to functions in maize"](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.16801). If you detect a file is missing or do you have a question please send and email: vladimir.torres@unl.edu
 
 ---
 
