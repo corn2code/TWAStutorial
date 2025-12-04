@@ -45,7 +45,7 @@ ls ../fasta
 ls ../fasta -lh # -lh displays more information
 ls ../fasta | wc -l # displays the number of files, for this example should be 12 belonging to six individuals (for example 2369_1.fastq.gz & 2369_2.fastq.gz)
 
-#if you want to open the fasta file you can use:
+#if you want to open the fasta file, you can use:
 #for more information check: https://en.wikipedia.org/wiki/FASTQ_format
 zcat ../fasta/2369_1.fastq.gz | head
 
@@ -62,7 +62,7 @@ First, run an example for "2369_1.fastq.gz". Please measure the time with a stop
 ml fastqc/0.12 #if the module is not loaded
 fastqc ../fasta/2369_1.fastq.gz -o ../fasta/fastqc_reports
 ```
-If we are running a few samples we can adjust the code to run like this (see below), but the time can increase massively (i.e for 12 samples = 36 min but what if we use the 1,500 samples)
+If we are running a few samples, we can adjust the code to run like this (see below), but the time can increase massively (i.e for 12 samples = 36 min but what if we use the 1,500 samples)
 ```bash
 fastqc ../fasta/*.fastq.gz -o ../fasta/fastqc_reports
 ```
@@ -90,7 +90,7 @@ SAMPLE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $SAMPLE_FILE)
 echo ${SAMPLE}
 
 # Run FastQC on the selected sample
-fastqc ${SAMPLE} -o fasta/fastqc_reports
+fastqc ${SAMPLE} -o ../fasta/fastqc_reports
 ```
 You can submit the job with:
 
