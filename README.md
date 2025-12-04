@@ -55,7 +55,7 @@ We can use [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
 
 Create a folder to save the reports
 ```bash
-fasta/fastqc_reports
+../fasta/fastqc_reports
 ```
 First, run an example for "2369_1.fastq.gz". Please measure the time with a stopwatch (around 3 minutes per sample).
 ```bash
