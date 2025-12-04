@@ -24,6 +24,7 @@ mkdir TWASTutorial/scripts
 mkdir TWASTutorial/output
 mkdir TWASTutorial/input
 mkdir TWASTutorial/log.out
+mkdir fasta
 cd TWASTutorial
 ```
 
