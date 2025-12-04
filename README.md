@@ -24,8 +24,8 @@ mkdir TWASTutorial/scripts
 mkdir TWASTutorial/output
 mkdir TWASTutorial/input
 mkdir TWASTutorial/log.out
-mkdir fasta
-cd TWASTutorial
+mkdir TWASTutorial/fasta
+cd TWASTutorial/scripts
 ```
 
 ## Step 2: Download data
@@ -53,6 +53,10 @@ zcat ../fasta/2369_1.fastq.gz | head
 ## Step 3: Check the quality of the data
 We can use [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) and [MultiQC](https://github.com/MultiQC/MultiQC)
 
+Create a folder to save the reports
+```bash
+fasta/fastqc_reports
+```
 First, run an example for "2369_1.fastq.gz". Please measure the time with a stopwatch (around 3 minutes per sample).
 ```bash
 ml fastqc/0.12 #if the module is not loaded
@@ -86,7 +90,7 @@ SAMPLE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $SAMPLE_FILE)
 echo ${SAMPLE}
 
 # Run FastQC on the selected sample
-fastqc ${SAMPLE} -o ../fasta/fastqc_reports
+fastqc ${SAMPLE} -o fasta/fastqc_reports
 
 You can submit the job with:
 
@@ -96,6 +100,11 @@ sbatch fastqc.slurm # to run the file
 
 ```
 Then we can use MultiQC to aggregate all the reports
+Create a folder to save the reports
+
+```bash
+mkdir ../fasta/multiqc_report 
+```
 
 ```bash
 ml multiqc/py37/1.8 #if the module is not loaded
