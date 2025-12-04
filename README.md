@@ -80,24 +80,26 @@ nano fastqc.slurm # to create a new slurm file
 # Load FastQC module
 ml fastqc/0.12
 
-# Define the list of samples and get the current sample
+# Define the list of samples in "samples.txt", and get the current sample. You can create this file with the paths, but here you can download it as an example
 SAMPLE_FILE="samples.txt"
 SAMPLE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $SAMPLE_FILE)
 echo ${SAMPLE}
 
 # Run FastQC on the selected sample
 fastqc ${SAMPLE} -o ../fasta/fastqc_reports
+
+You can submit the job with:
+
+```bash
+sbatch fastqc.slurm # to run the file
+```
+
 ```
 Then we can use MultiQC to aggregate all the reports
 
 ```bash
 ml multiqc/py37/1.8 #if the module is not loaded
 multiqc ../fasta/fastqc_reports -o ../fasta/multiqc_report
-```
-you can submit the job with:
-
-```bash
-sbatch fastqc.slurm # to run the file
 ```
 
 ## Step 4: Remove adapters and low-quality bases
