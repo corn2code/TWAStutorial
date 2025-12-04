@@ -91,14 +91,13 @@ echo ${SAMPLE}
 
 # Run FastQC on the selected sample
 fastqc ${SAMPLE} -o fasta/fastqc_reports
-
+```
 You can submit the job with:
 
 ```bash
 sbatch fastqc.slurm # to run the file
 ```
 
-```
 Then we can use MultiQC to aggregate all the reports
 Create a folder to save the reports
 
