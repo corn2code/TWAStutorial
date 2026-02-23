@@ -7,8 +7,6 @@
   <img alt="Languages" src="https://img.shields.io/badge/Languages-Bash%20%7C%20Python%20%7C%20R-4B5563">
 </p>
 
-This repository contains a teaching-oriented TWAS workflow in maize. This version focuses on clarity and reproducibility while preserving the original analysis approach.
-
 ## Quick Navigation
 
 | Section | Focus | Main outputs |
