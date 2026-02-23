@@ -1,5 +1,5 @@
-<h1 align="center">Transcriptome-Wide Association Study (TWAS) Tutorial</h1>
-<p align="center"><strong>RNA-seq processing to TWAS in maize</strong></p>
+<h1 align="center">Transcriptome-Wide Association Study (TWAS) Tutorial in maize</h1>
+<p align="center"><strong>RNA-seq processing to TWAS</strong></p>
 
 <p align="center">
   <img alt="Workflow" src="https://img.shields.io/badge/Workflow-RNA--seq_to_TWAS-0A4E9B">
