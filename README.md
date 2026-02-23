@@ -9,9 +9,6 @@
 
 This repository contains a teaching-oriented TWAS workflow in maize. This version focuses on clarity and reproducibility while preserving the original analysis approach.
 
-> [!NOTE]
-> GitHub README files do not support custom font embedding. This file uses GitHub-native formatting for a cleaner visual presentation.
-
 ## Quick Navigation
 
 | Section | Focus | Main outputs |
